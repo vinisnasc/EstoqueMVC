@@ -1,8 +1,44 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model Estoque.MVC.Models.IdentityModels.IdentityViewModels.LoginModel
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<head>
+    <link rel="stylesheet" type="text/css" href="StyleSheet" />
+</head>
+
+<body>
+    <div class="text-center">
+        <h1 class="display-4">Bem vindo ao gestor de estoque de EPI's</h1>
+        <p>Para mais informações, me envie um e-mail! <a href="vini.souza00@gmail.com">vini.souza00@gmail.com</a></p>
+    </div>
+
+    <hr />
+
+    <div align ="center">
+            <div class="col-md-4">
+                <form asp-action="Login">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="UserName" class="control-label"></label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Logar" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    <div align="center">
+        <a asp-controller="Home" asp-action="Register" class="btn btn-outline-info">Registrar</a>
+        <a asp-controller="Home" asp-action="ForgotPassword" class="btn btn-outline-info">Esqueci minha senha</a>
+    </div>
+</body>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

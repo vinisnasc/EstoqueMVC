@@ -4,14 +4,16 @@ using Estoque.MVC.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Estoque.MVC.Migrations
 {
     [DbContext(typeof(EstoqueMVCContext))]
-    partial class EstoqueMVCContextModelSnapshot : ModelSnapshot
+    [Migration("20211030230646_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

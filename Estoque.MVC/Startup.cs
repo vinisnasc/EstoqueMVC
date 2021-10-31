@@ -1,4 +1,5 @@
 ﻿using Estoque.MVC.Data;
+using Estoque.MVC.Models.EmailSender;
 using Estoque.MVC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -32,6 +34,16 @@ namespace Estoque.MVC
             // Injeção de dependencia
             services.AddScoped<EPIService>();
 
+            // Configuração de envio de e-mail
+            services.AddTransient<IEmailSender, SendGridEmailSender>();
+            services.Configure<SendGridEmailSenderOptions>(options =>
+            {
+                options.ApiKey = Configuration["ExternalProviders:SendGrid:ApiKey"];
+                options.SenderEmail = Configuration["ExternalProviders:SendGrid:SenderEmail"];
+                options.SenderName = Configuration["ExternalProviders:SendGrid:SenderName"];
+            });
+
+            // Inclusao do Identity, sem utilizar personalização do IdentityUser, porem modificando o IdentityDbContext
             services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = true;
@@ -39,7 +51,7 @@ namespace Estoque.MVC
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 4;
+                options.Password.RequiredLength = 5;
 
                 // Travar o login por tentativas erradas
                 options.Lockout.MaxFailedAccessAttempts = 3;
@@ -47,6 +59,15 @@ namespace Estoque.MVC
             })
                     .AddEntityFrameworkStores<EstoqueMVCContext>()
                     .AddDefaultTokenProviders();
+
+            // Injeção de dependencia para personalização das Claims
+            services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, UserClaimsPrincipalFactory<IdentityUser>>();
+
+            // Configura em quanto tempo o Token de alteração de senha vai expirar
+            services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromHours(3));
+
+            // Configuração de cookies
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Home/Login");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -77,6 +98,9 @@ namespace Estoque.MVC
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Adicionar autenticação
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

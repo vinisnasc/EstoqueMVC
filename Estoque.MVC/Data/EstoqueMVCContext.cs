@@ -18,5 +18,10 @@ namespace Estoque.MVC.Data
         public DbSet<EPI> EPI { get; set; }
         public DbSet<Retirada> Retirada { get; set; }
         public DbSet<Funcionario> Funcionario { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }
